@@ -60,3 +60,21 @@
 - post /reviewrequest - accept, reject
 - get /request
 - get /connection 
+- order is very important in code, and routes.
+
+# ROUTING ADVANCE CONCEPTS
+- "/ab?c" - here b is optional.
+- "/ab+c" - a and c b in last and can be any numbe of b.
+- "/ab*cd" - ab should be in start and cd should be in end and anything can be in between.
+
+- regex magic - (/a/) - if in path a comes it will work.
+- (/.*fly$/) - anything will work which ends with fly.
+
+# Multiple route handler
+- next();
+- next function and errors along with res.send()
+- app.use("/route", rH, [rh2, rh3], rh4, rh5);
+- what is middleware?
+- How express js basically handles requests behind the scenes.
+
+
