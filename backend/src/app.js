@@ -3,9 +3,13 @@ const connectDB = require("./config/database");
 const User= require("./models/user")
 const bcrypt=require("bcrypt");
 const validateSignUpData=require("./utils/validation");
+const cookieParser=require("cookie-parser");
+const jwt=require("jsonwebtoken");
+const{adminAuth, userAuth}= require("./middleware/auth")
 
 const app= express();
 app.use(express.json()); 
+app.use(cookieParser());
 
 
 app.post("/signup",async(req, res)=>{
@@ -29,7 +33,6 @@ try {
     res.status(400).send("error saving the user:"+error);
   }
 })
-
 // login api
 app.post("/login",async(req, res)=>{
   try {
@@ -40,6 +43,14 @@ app.post("/login",async(req, res)=>{
     }
     const isPasswordValid=bcrypt.compare(password, user.password);
     if(isPasswordValid){
+
+      // create jwt token
+      const token=await jwt.sign({_id:user._id},"fjtghuvhbubooq3tvp456+564454", {expiresIn :"7d"});
+      console.log(token);
+
+
+      // add the token to cookie and send the response to the user 
+      res.cookie("token", token);
       res.send("Login successful");
     }
     else{
@@ -49,11 +60,25 @@ app.post("/login",async(req, res)=>{
     res.status(400).send("lOGIN FAILED");
   }
 })
+// profile api
+app.get("/profile", userAuth, async(req, res)=>{
+  
+ try{
+    const user=req.user;
+    if(!user){
+      throw new error("user doesn't exist.")
+    }
+    res.send(user);
+  }
+  catch(error){
+    res.status(400).send("unauthorized access");
+  }
+})
 
 
 
 // find user by email
-app.get("/user", async(req, res)=>{
+app.get("/user", userAuth, async(req, res)=>{
   const userEmail=req.body.emailId;
   
   try {
