@@ -78,3 +78,24 @@
 - How express js basically handles requests behind the scenes.
 
 
+# all api of devtinder
+### (Auth router)
+- POST/signup
+- POST/login
+- POST/logout
+
+## (profile router)
+- GET/profile
+- PATCH/updateprofile
+- patch/profile/password
+
+## (connectionrequest router)
+- POST/request/send/interested/:userId
+- POST/request/send/ignored/:userId
+- POST /request/review/accepted/:requestId;
+- POST /request/review/rejected/:requestId
+
+## (userRouter)
+- GET/user/connections
+- GET/user/requests/received
+- GET/user/feed - gets you the profile of other user
