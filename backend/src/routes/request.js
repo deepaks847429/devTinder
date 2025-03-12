@@ -16,12 +16,23 @@ const express= require("express");
       if(!allowedStatus.includes(status)){
         return res.status(400).json({message :  "Invalid status type : " + status});
       }
+
+      const toUser= await User.findById(toUserId);
+      if(!toUser){
+        return res.status(400).json({message: "User not found!"});
+      }
+
+      
+
        // if there ia an existing connectionrequest
       const existingConnectionrequest= await ConnectionRequest.findOne({
-        fromUserId,
-        toUserId,
-        status
+        $or:[{fromUserId, toUserId},
+          {fromUserId: toUserId, toUserId:fromUserId},
+        ],
       })
+      if(existingConnectionrequest){
+          return res.status(400).send({message: "Connection request already exist"})
+      }
 
       const connectionRequest=new connectionRequest({
         fromUserId,
@@ -30,7 +41,9 @@ const express= require("express");
       });
 
       const data=await connectionRequest.save();
-      res.json({message:"connection request sent successfully", data,});      
+
+      res.json({message: req.User.firstName +"is " 
+        + status + "in " + toUser.firstName, data});      
     } catch (error) {
       res.status(400).send("Error: "+err.message);
     }

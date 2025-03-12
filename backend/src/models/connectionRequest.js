@@ -23,6 +23,17 @@ status:{
 {timestamps: true,}
 );
 
+connectionRequestSchema.index({ fromUserId:1, toUserId:1},{unique:true});
+
+connectionRequestSchema.pre("save", async function(next){
+  const connectionRequest=this;
+  // check if the fromUserId is same as the toUserId
+  if(connectionRequest.fromUserId.equals(connectionRequest.toUserId)){
+    throw new error ("fromUserId and toUserId cannot be the same");
+  }
+  next();
+})
+
 const ConnectionRequestModel = new mongoose.model("ConnectionRequest", connectionRequestSchema);
 
 module.exports= ConnectionRequestModel;
